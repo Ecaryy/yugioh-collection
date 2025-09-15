@@ -24,3 +24,6 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.group-hover\:rotate-y-360:hover {
+    transform: rotateY(360deg);
+}
