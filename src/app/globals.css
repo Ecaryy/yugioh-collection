@@ -27,3 +27,19 @@ body {
 .group-hover\:rotate-y-360:hover {
     transform: rotateY(360deg);
 }
+
+@keyframes modal-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-modal-in {
+    animation: modal-in 0.3s ease-out forwards;
+}

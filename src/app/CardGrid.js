@@ -1,4 +1,4 @@
-﻿export default function CardGrid({ cards, loading, page, totalPages, nextPage, prevPage, toggleCardPossession }) {
+﻿export default function CardGrid({ cards, loading, page, totalPages, nextPage, prevPage, toggleCardPossession, onAddClick }) {
     return (
         <div>
             {loading && <p className="text-center text-gray-500 mb-4">Chargement...</p>}
@@ -10,12 +10,12 @@
                         className="relative group border border-gray-400 rounded shadow bg-gray-700 transition-shadow duration-300 hover:shadow-xl overflow-visible"
                     >
                         {/* Container image cropée */}
-                        <div className="h-48 overflow-hidden">
+                        <div className="h-48 overflow-hidden rounded-t-2xl">
                             {card.image && (
                                 <img
                                     src={card.image}
                                     alt={card.nom}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
                             )}
                         </div>
@@ -33,18 +33,24 @@
 
                         {/* Infos de la carte */}
                         <div className="p-4 relative z-20">
-                            <h3 className="font-semibold text-lg">{card.nom}</h3>
-                            <p className="text-sm text-gray-100">{card.type} — {card.etat}</p>
+                            <h3 className="font-semibold text-lg text-white">{card.nom}</h3>
+                            <p className="text-sm text-gray-500">{card.type} — {card.etat}</p>
                             <div className="mt-2">
-                                <button
-                                    onClick={() => toggleCardPossession(card.id, card.possede)}
-                                    className={`px-3 py-1 rounded font-semibold transition-colors duration-200 ${card.possede
-                                            ? "bg-red-500 text-white hover:bg-red-600"
-                                            : "bg-green-500 text-white hover:bg-green-600"
-                                        }`}
-                                >
-                                    {card.possede ? "Remove" : "Ajouter à la collection"}
-                                </button>
+                                {card.possede ? (
+                                    <button
+                                        onClick={() => toggleCardPossession(card.id, card.possede)}
+                                        className="w-full px-4 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 shadow-sm transition"
+                                    >
+                                        Retirer de ma collection
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => onAddClick(card)} // ⬅️ ouvre modal
+                                        className="w-full px-4 py-2 rounded-xl bg-green-500 text-white font-semibold hover:bg-green-600 shadow-sm transition"
+                                    >
+                                        Ajouter à ma collection
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
