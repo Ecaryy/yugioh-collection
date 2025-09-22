@@ -8,6 +8,7 @@ export default function HomePage() {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [pageInput, setPageInput] = useState(1);
     const [loading, setLoading] = useState(false);
     const [totalOwned, setTotalOwned] = useState(0);
     const [totalMissing, setTotalMissing] = useState(0);
@@ -17,10 +18,12 @@ export default function HomePage() {
 
     const [filterPossede, setFilterPossede] = useState("all"); // all | possede | manquant
     const [filterType, setFilterType] = useState("all");       // all | Monstre | Magie | Piège
+    const [filterClasse, setFilterClasse] = useState("all");
 
     const [selectedCard, setSelectedCard] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [etat, setEtat] = useState("");
+    const [imageUrl, setImageUrl] = useState(""); 
 
 
     function handleAddClick(card) {
@@ -34,20 +37,26 @@ export default function HomePage() {
 
         const { error } = await supabase
             .from("Cards")
-            .update({ possede: true, etat })
+            .update({ possede: true, etat, image: imageUrl || selectedCard.image })
             .eq("id", selectedCard.id);
 
-        if (error) console.error(error);
-        else {
+        if (error) {
+            console.error("Erreur ajout carte :", error);
+        } else {
+            // Mets à jour le state local
             setCards((prev) =>
                 prev.map((c) =>
-                    c.id === selectedCard.id ? { ...c, possede: true, etat } : c
+                    c.id === selectedCard.id
+                        ? { ...c, possede: true, etat, image: imageUrl || c.image }
+                        : c
                 )
             );
+            // Reset
+            setEtat("");
+            setImageUrl("");
+            setSelectedCard(null);
+            setShowModal(false);
         }
-
-        setShowModal(false);
-        setSelectedCard(null);
     }
 
     async function loadCards(page = 0, searchTerm = "", possedeFilter = "all", typeFilter = "all") {
@@ -77,6 +86,9 @@ export default function HomePage() {
             query = query.eq("type", typeFilter);
         }
 
+        if (filterClasse !== "all") {
+            query = query.eq("classe", filterClasse);
+        }
 
         const { data, count, error } = await query;
 
@@ -117,19 +129,20 @@ export default function HomePage() {
         setCompletion(completionPercentage);
     }
 
-    async function toggleCardPossession(cardId, currentlyOwned) {
+    async function toggleCardPossession(cardId, currentlyOwned)
+    {
         if (currentlyOwned) {
             // Si on retire la carte → mettre possede = false et vider etat
             const { error } = await supabase
                 .from("Cards")
-                .update({ possede: false, etat: null })
+                .update({ possede: false, etat: null, image: null })
                 .eq("id", cardId);
 
             if (error) console.error("Erreur mise à jour carte:", error);
             else {
                 setCards((prev) =>
                     prev.map((c) =>
-                        c.id === cardId ? { ...c, possede: false, etat: null } : c
+                        c.id === cardId ? { ...c, possede: false, etat: null, image: null } : c
                     )
                 );
             }
@@ -139,30 +152,59 @@ export default function HomePage() {
         }
     }
 
+    async function updateCardEtat(cardId, newEtat) {
+        const { error } = await supabase
+            .from("Cards")
+            .update({ etat: newEtat })
+            .eq("id", cardId);
+
+        if (error) {
+            console.error("Erreur mise à jour état:", error);
+        } else {
+            // 🔹 Met à jour le state local pour un affichage instantané
+            setCards((prev) =>
+                prev.map((c) =>
+                    c.id === cardId ? { ...c, etat: newEtat } : c
+                )
+            );
+        }
+    }
+
+
+
+
     useEffect(() => {
         fetchCollectionStats();
     }, []);
     // Reload cards chaque fois que la recherche change
     useEffect(() => {
         setPage(0);
-        loadCards(0, search, filterPossede, filterType);
-    }, [search, filterPossede, filterType]);
+        loadCards(0, search, filterPossede, filterType, filterClasse);
+    }, [search, filterPossede, filterType, filterClasse]);
 
     // Fonction pour page suivante
     const nextPage = () => {
         if (page + 1 < totalPages) {
-            loadCards(page + 1, search, filterPossede, filterType);
+            loadCards(page + 1, search, filterPossede, filterType, filterClasse);
             setPage(page + 1);
+            setPageInput(page + 2);
         }
     };
 
-    // Fonction pour page précédente
     const prevPage = () => {
         if (page > 0) {
-            loadCards(page - 1, search, filterPossede, filterType);
+            loadCards(page - 1, search, filterPossede, filterType, filterClasse);
             setPage(page - 1);
+            setPageInput(page);
         }
     };
+    const goToPage = (newPage) => {
+        const pageNumber = Math.min(Math.max(1, newPage), totalPages);
+        setPage(pageNumber - 1);
+        loadCards(pageNumber - 1, search, filterPossede, filterType, filterClasse);
+        setPageInput(pageNumber); // met à jour le champ de saisie
+    };
+
 
     return (
         <main className="p-6 max-w-7xl mx-auto">
@@ -246,6 +288,41 @@ export default function HomePage() {
                     <option value="Stratégie">Stratégie</option>
                     <option value="Tactique">Tactique</option>
                 </select>
+
+                {/* Filtre classe */}
+                <select
+                    value={filterClasse}
+                    onChange={(e) => setFilterClasse(e.target.value)}
+                    className="p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                >
+                    <option value="all">Toutes les classes</option>
+                    <option value="No">No</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Aqua">Aqua</option>
+                    <option value="Bête">Bête</option>
+                    <option value="Elfe">Elfe</option>
+                    <option value="Démon">Démon</option>
+                    <option value="Dinosaure">Dinosaure</option>
+                    <option value="Cyberse">Cyberse</option>
+                    <option value="Guerrier">Guerrier</option>
+                    <option value="Insecte">Insecte</option>
+                    <option value="Plante">Plante</option>
+                    <option value="Poisson">Poisson</option>
+                    <option value="Psychique">Psychique</option>
+                    <option value="Rocher">Rocher</option>
+                    <option value="Serpent de mer">Serpent de mer</option>
+                    <option value="Tonnerre">Tonnerre</option>
+                    <option value="Bête-Divine">Bête-Divine</option>
+                    <option value="Magicien">Magicien</option>
+                    <option value="Zombie">Zombie</option>
+                    <option value="Bête-Guerrier">Bête-Guerrier</option>
+                    <option value="Bête Ailée">Bête Ailée</option>
+                    <option value="Reptile">Reptile</option>
+                    <option value="Pyro">Pyro</option>
+                    <option value="Machine">Machine</option>
+                    <option value="Wyrm">Wyrm</option>
+                    <option value="Illusion">Illusion</option>
+                </select>
             </div>
 
             <CardGrid
@@ -257,19 +334,21 @@ export default function HomePage() {
                 prevPage={prevPage}
                 toggleCardPossession={toggleCardPossession} // ← bien passé ici
                 onAddClick={handleAddClick}
+                updateCardEtat={updateCardEtat}
+                pageInput={pageInput}
+                setPageInput={setPageInput}
+                goToPage={goToPage}
             />
             {showModal && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full 
-                 transform scale-95 opacity-0 transition-all duration-300 ease-out
-                 animate-modal-in">
+                    <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full">
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Ajouter {selectedCard.nom}</h2>
 
                         <label className="block mb-2 font-medium">État de la carte :</label>
                         <select
                             value={etat}
                             onChange={(e) => setEtat(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 mb-4 transition"
+                            className="w-full p-3 border border-gray-300 rounded-lg mb-4"
                         >
                             <option value="">Sélectionner...</option>
                             <option value="Neuf">Neuf</option>
@@ -277,6 +356,16 @@ export default function HomePage() {
                             <option value="Bon état">Bon état</option>
                             <option value="Abîmé">Abîmé</option>
                         </select>
+
+                        {/* Champ URL image */}
+                        <label className="block mb-2 font-medium">Lien image :</label>
+                        <input
+                            type="text"
+                            value={imageUrl}
+                            onChange={(e) => setImageUrl(e.target.value)}
+                            placeholder="https://exemple.com/mon-image.jpg"
+                            className="w-full p-3 border border-gray-300 rounded-lg mb-4"
+                        />
 
                         <div className="flex justify-end gap-3">
                             <button

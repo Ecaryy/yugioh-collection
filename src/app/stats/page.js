@@ -8,13 +8,15 @@ export default function StatsPage() {
     const [completion, setCompletion] = useState(0);
 
     const [typeStats, setTypeStats] = useState([]);
+    const [classStats, setClassStats] = useState([]);
+
+    const [view, setView] = useState(null); // null | "type" | "classe"
 
     useEffect(() => {
-        fetchStats();
+        fetchGlobalStats();
     }, []);
 
-    async function fetchStats() {
-        // Global totals
+    async function fetchGlobalStats() {
         const { count: ownedCount } = await supabase
             .from("Cards")
             .select("*", { count: "exact", head: true })
@@ -29,8 +31,9 @@ export default function StatsPage() {
         setTotalMissing(missingCount || 0);
         const total = (ownedCount || 0) + (missingCount || 0);
         setCompletion(total > 0 ? Math.round((ownedCount / total) * 100) : 0);
+    }
 
-        // Types sélectionnés
+    async function fetchTypeStats() {
         const types = [
             "Monstre à Effet",
             "Monstre Normal",
@@ -58,9 +61,6 @@ export default function StatsPage() {
             "Token",
             "Stratégie",
             "Tactique"
-
-
-            // ajoute d'autres types si besoin
         ];
 
         const statsArray = [];
@@ -77,7 +77,7 @@ export default function StatsPage() {
                 .eq("type", type);
 
             statsArray.push({
-                type,
+                name: type,
                 owned: owned || 0,
                 total: totalType || 0,
                 missing: (totalType || 0) - (owned || 0),
@@ -87,6 +87,69 @@ export default function StatsPage() {
 
         setTypeStats(statsArray);
     }
+
+    async function fetchClassStats() {
+        const classes = [
+            "No",
+            "Dragon",
+            "Aqua",
+            "Bête",
+            "Elfe",
+            "Démon",
+            "Dinosaure",
+            "Cyberse",
+            "Guerrier",
+            "Insecte",
+            "Plante",
+            "Poisson",
+            "Psychique",
+            "Rocher",
+            "Serpent de mer",
+            "Tonnerre",
+            "Bête-Divine",
+            "Magicien",
+            "Zombie",
+            "Bête-Guerrier",
+            "Bête Ailée",
+            "Reptile",
+            "Pyro",
+            "Machine",
+            "Wyrm",
+            "Illusion"
+        ];
+
+        const statsArray = [];
+        for (const cls of classes) {
+            const { count: owned } = await supabase
+                .from("Cards")
+                .select("*", { count: "exact", head: true })
+                .eq("possede", true)
+                .eq("classe", cls);
+
+            const { count: totalClass } = await supabase
+                .from("Cards")
+                .select("*", { count: "exact", head: true })
+                .eq("classe", cls);
+
+            statsArray.push({
+                name: cls,
+                owned: owned || 0,
+                total: totalClass || 0,
+                missing: (totalClass || 0) - (owned || 0),
+                completion: totalClass > 0 ? Math.round((owned / totalClass) * 100) : 0
+            });
+        }
+
+        setClassStats(statsArray);
+    }
+
+    const handleView = async (type) => {
+        setView(type);
+        if (type === "type") await fetchTypeStats();
+        if (type === "classe") await fetchClassStats();
+    };
+
+    const statsToShow = view === "type" ? typeStats : view === "classe" ? classStats : [];
 
     return (
         <main className="p-6 max-w-6xl mx-auto">
@@ -103,40 +166,55 @@ export default function StatsPage() {
                 </div>
             </div>
 
-            {/* Grille des types */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {typeStats.map((typeStat) => (
-                    <div
-                        key={typeStat.type}
-                        className="p-4 border rounded-lg shadow bg-gray-50"
-                    >
-                        <p className="font-semibold mb-2 text-center">{typeStat.type}</p>
-                        <div className="flex justify-around mb-2 text-sm">
-                            <div className="text-center">
-                                <p className="font-bold text-green-600">{typeStat.owned}</p>
-                                <p>Possédées</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="font-bold text-red-600">{typeStat.missing}</p>
-                                <p>Manquantes</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="font-bold">{typeStat.total}</p>
-                                <p>Total</p>
-                            </div>
-                        </div>
-                        <div className="w-full h-4 bg-gray-200 rounded-full">
-                            <div
-                                className="h-4 bg-green-500 rounded-full transition-all duration-500"
-                                style={{ width: `${typeStat.completion}%` }}
-                            ></div>
-                        </div>
-                        <p className="text-center mt-1 text-sm font-medium">
-                            {typeStat.completion}% complété
-                        </p>
-                    </div>
-                ))}
+            {/* Boutons pour choisir stats */}
+            <div className="flex justify-center gap-4 mb-6">
+                <button
+                    onClick={() => handleView("type")}
+                    className={`px-4 py-2 rounded-lg font-semibold ${view === "type" ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+                >
+                    Stats par Type
+                </button>
+                <button
+                    onClick={() => handleView("classe")}
+                    className={`px-4 py-2 rounded-lg font-semibold ${view === "classe" ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+                >
+                    Stats par Classe
+                </button>
             </div>
+
+            {/* Grille de stats */}
+            {view && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {statsToShow.map((stat) => (
+                        <div key={stat.name} className="p-4 border rounded-lg shadow bg-gray-50">
+                            <p className="font-semibold mb-2 text-center">{stat.name}</p>
+                            <div className="flex justify-around mb-2 text-sm">
+                                <div className="text-center">
+                                    <p className="font-bold text-green-600">{stat.owned}</p>
+                                    <p>Possédées</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="font-bold text-red-600">{stat.missing}</p>
+                                    <p>Manquantes</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="font-bold">{stat.total}</p>
+                                    <p>Total</p>
+                                </div>
+                            </div>
+                            <div className="w-full h-4 bg-gray-200 rounded-full">
+                                <div
+                                    className="h-4 bg-green-500 rounded-full transition-all duration-500"
+                                    style={{ width: `${stat.completion}%` }}
+                                ></div>
+                            </div>
+                            <p className="text-center mt-1 text-sm font-medium">
+                                {stat.completion}% complété
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            )}
         </main>
     );
 }
