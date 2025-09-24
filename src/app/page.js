@@ -24,12 +24,63 @@ export default function HomePage() {
     const [showModal, setShowModal] = useState(false);
     const [etat, setEtat] = useState("");
     const [imageUrl, setImageUrl] = useState(""); 
+    const [editingCardId, setEditingCardId] = useState(null);
+    const [newImageUrl, setNewImageUrl] = useState("");
+
+    const [cardToDelete, setCardToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [newCard, setNewCard] = useState({
+        nom: "",
+        type: "",
+        classe: "",
+        etat: "",
+        image: "",
+        possede: false,
+    });
 
 
     function handleAddClick(card) {
         setSelectedCard(card);
         setEtat(""); // reset champ
         setShowModal(true);
+    }
+
+    async function updateCardImage(cardId, imageUrl) {
+        const { error } = await supabase
+            .from("Cards")
+            .update({ image: imageUrl })
+            .eq("id", cardId);
+
+        if (!error) {
+            setCards((prevCards) =>
+                prevCards.map((card) =>
+                    card.id === cardId ? { ...card, image: imageUrl } : card
+                )
+            );
+            setEditingCardId(null);
+            setNewImageUrl("");
+        }
+    }
+
+    async function updateCardField(cardId, field, value) {
+        const { data, error } = await supabase
+            .from("Cards")
+            .update({ [field]: value })
+            .eq("id", cardId);
+
+        if (error) {
+            console.error("Erreur mise à jour", error);
+            return;
+        }
+
+        // Met à jour localement
+        setCards(prev =>
+            prev.map(card =>
+                card.id === cardId ? { ...card, [field]: value } : card
+            )
+        );
     }
 
     async function confirmAdd() {
@@ -170,8 +221,25 @@ export default function HomePage() {
         }
     }
 
+    async function deleteCard(cardId) {
+        const { error } = await supabase.from("Cards").delete().eq("id", cardId);
 
+        if (error) {
+            console.error("Erreur suppression:", error);
+            alert("❌ Impossible de supprimer la carte.");
+        } else {
+            setCards((prev) => prev.filter((c) => c.id !== cardId));
+        }
 
+        // Fermer le modal après suppression
+        setShowDeleteModal(false);
+        setCardToDelete(null);
+    }
+
+    async function fetchCards() {
+        const { data, error } = await supabase.from("Cards").select("*").order("id", { ascending: true });
+        if (!error) setCards(data);
+    }
 
     useEffect(() => {
         fetchCollectionStats();
@@ -221,9 +289,17 @@ export default function HomePage() {
                     </p>
                 </div>
             </div>
+
             <div className="flex justify-between items-center mb-6 p-4 bg-gray-800 rounded-xl shadow-md">
                 {/* Titre du site */}
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">Ma Collection Yu-Gi-Oh</h1>
+                <div className="flex gap-2">
+                <button
+                    onClick={() => setShowCreateModal(true)}
+                        className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition-colors"
+                >
+                    + Créer une carte
+                </button>
 
                 {/* Bouton pour stats */}
                 <a
@@ -231,7 +307,8 @@ export default function HomePage() {
                     className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition-colors"
                 >
                     📊 Stats
-                </a>
+                    </a>
+                </div>
             </div>
             <input
                 type="text"
@@ -332,13 +409,212 @@ export default function HomePage() {
                 totalPages={totalPages}
                 nextPage={nextPage}
                 prevPage={prevPage}
-                toggleCardPossession={toggleCardPossession} // ← bien passé ici
+                toggleCardPossession={toggleCardPossession}
                 onAddClick={handleAddClick}
                 updateCardEtat={updateCardEtat}
                 pageInput={pageInput}
                 setPageInput={setPageInput}
                 goToPage={goToPage}
+                editingCardId={editingCardId}
+                setEditingCardId={setEditingCardId}
+                newImageUrl={newImageUrl}
+                setNewImageUrl={setNewImageUrl}
+                updateCardImage={updateCardImage}
+                cardToDelete={cardToDelete}             // ← nouvel état
+                setCardToDelete={setCardToDelete}       // ← fonction setter
+                showDeleteModal={showDeleteModal}       // ← nouvel état
+                setShowDeleteModal={setShowDeleteModal} // ← fonction setter
+                updateCardField={updateCardField} 
             />
+            {showCreateModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+                        <h2 className="text-xl font-bold mb-4">Créer une nouvelle carte</h2>
+
+                        {/* Nom */}
+                        <input
+                            type="text"
+                            placeholder="Nom de la carte"
+                            value={newCard.nom}
+                            onChange={(e) => setNewCard({ ...newCard, nom: e.target.value })}
+                            className="w-full px-2 py-1 mb-2 border rounded"
+                        />
+
+                        {/* Type */}
+                        <select
+                            value={newCard.type}
+                            onChange={(e) => setNewCard({ ...newCard, type: e.target.value })}
+                            className="w-full px-2 py-1 mb-2 border rounded"
+                        >
+                            <option value="">Sélectionner un type...</option>
+                            <option value="Monstre à Effet">Monstre à Effet</option>
+                            <option value="Monstre Normal">Monstre Normal</option>
+                            <option value="Magie Équipement">Magie Équipement</option>
+                            <option value="Magie Normale">Magie Normale</option>
+                            <option value="Magie Continue">Magie Continue</option>
+                            <option value="Magie Rapide">Magie Rapide</option>
+                            <option value="Piège Normal">Piège Normal</option>
+                            <option value="Piège Continu">Piège Continu</option>
+                            <option value="Piège Contre">Piège Contre</option>
+                            <option value="Monstre Synchro">Monstre Synchro</option>
+                            <option value="Token">Token</option>
+                            <option value="Monstre Rituel">Monstre Rituel</option>
+                            <option value="Magie Terrain">Magie Terrain</option>
+                            <option value="Magie Rituelle">Magie Rituelle</option>
+                            <option value="Monstre Fusion">Monstre Fusion</option>
+                            <option value="Monstre XYZ">Monstre XYZ</option>
+                            <option value="Monstre Lien">Monstre Lien</option>
+                            <option value="Monstre P. Effet">Monstre P. Effet</option>
+                            <option value="Monstre P. Normal">Monstre P. Normal</option>
+                            <option value="Monstre P. XYZ">Monstre P. XYZ</option>
+                            <option value="Monstre P. Fusion">Monstre P. Fusion</option>
+                            <option value="Monstre P. Synchro">Monstre P. Synchro</option>
+                            <option value="Compétence">Compétence</option>
+                            <option value="Monstre P. Rituel">Monstre P. Rituel</option>
+                            <option value="Spécial">Spécial</option>
+                            <option value="Stratégie">Stratégie</option>
+                            <option value="Tactique">Tactique</option>
+                            {/* ...tous tes types */}
+                        </select>
+
+                        {/* Classe */}
+                        <select
+                            value={newCard.classe}
+                            onChange={(e) => setNewCard({ ...newCard, classe: e.target.value })}
+                            className="w-full px-2 py-1 mb-2 border rounded"
+                        >
+                            <option value="">Sélectionner une classe...</option>
+                            <option value="No">No</option>
+                            <option value="Dragon">Dragon</option>
+                            <option value="Aqua">Aqua</option>
+                            <option value="Bête">Bête</option>
+                            <option value="Elfe">Elfe</option>
+                            <option value="Démon">Démon</option>
+                            <option value="Dinosaure">Dinosaure</option>
+                            <option value="Cyberse">Cyberse</option>
+                            <option value="Guerrier">Guerrier</option>
+                            <option value="Insecte">Insecte</option>
+                            <option value="Plante">Plante</option>
+                            <option value="Poisson">Poisson</option>
+                            <option value="Psychique">Psychique</option>
+                            <option value="Rocher">Rocher</option>
+                            <option value="Serpent de mer">Serpent de mer</option>
+                            <option value="Tonnerre">Tonnerre</option>
+                            <option value="Bête-Divine">Bête-Divine</option>
+                            <option value="Magicien">Magicien</option>
+                            <option value="Zombie">Zombie</option>
+                            <option value="Bête-Guerrier">Bête-Guerrier</option>
+                            <option value="Bête Ailée">Bête Ailée</option>
+                            <option value="Reptile">Reptile</option>
+                            <option value="Pyro">Pyro</option>
+                            <option value="Machine">Machine</option>
+                            <option value="Wyrm">Wyrm</option>
+                            <option value="Illusion">Illusion</option>
+                            {/* ...toutes tes classes */}
+                        </select>
+
+                        {/* État */}
+                        <select
+                            value={newCard.etat}
+                            onChange={(e) => setNewCard({ ...newCard, etat: e.target.value })}
+                            className="w-full px-2 py-1 mb-2 border rounded"
+                        >
+                            <option value="">Sélectionner un état...</option>
+                            <option value="Neuf">Neuf</option>
+                            <option value="Très bon état">Très bon état</option>
+                            <option value="Bon état">Bon état</option>
+                            <option value="Abîmé">Abîmé</option>
+                        </select>
+
+                        {/* Image */}
+                        <input
+                            type="text"
+                            placeholder="Lien de l'image"
+                            value={newCard.image}
+                            onChange={(e) => setNewCard({ ...newCard, image: e.target.value })}
+                            className="w-full px-2 py-1 mb-4 border rounded"
+                        />
+
+                        {/* Possédé ? */}
+                        <label className="flex items-center mb-4">
+                            <input
+                                type="checkbox"
+                                checked={newCard.possede}
+                                onChange={(e) => setNewCard({ ...newCard, possede: e.target.checked })}
+                                className="mr-2"
+                            />
+                            Possédé
+                        </label>
+
+                        {/* Actions */}
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setShowCreateModal(false)}
+                                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    const { nom, type, classe, etat, image, possede } = newCard;
+
+                                    const { data, error } = await supabase
+                                        .from("Cards")
+                                        .insert([newCard]) // objet sans id
+                                        .select(); // récupère la carte créée avec l'id généré
+                                    if (!error) {
+                                        setCards((prev) => [...prev, ...data]); // ajoute la nouvelle carte
+                                        setShowCreateModal(false);              // ferme le modal
+                                        setNewCard({                             // reset du formulaire
+                                            nom: "",
+                                            type: "",
+                                            classe: "",
+                                            etat: "",
+                                            image: "",
+                                            possede: false,
+                                        });
+                                    } else {
+                                        console.error("Erreur lors de l'ajout :", error);
+                                    }
+                                }}
+                                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            >
+                                Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <div className="bg-white rounded-xl shadow-xl p-6 w-80">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                            Supprimer cette carte ?
+                        </h2>
+                        <p className="text-sm text-gray-600 mb-6">
+                            Cette action est <span className="font-bold text-red-600">définitive</span>.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowDeleteModal(false);
+                                    setCardToDelete(null);
+                                }}
+                                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={() => deleteCard(cardToDelete)}
+                                className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
+                            >
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {showModal && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
                     <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full">

@@ -1,5 +1,6 @@
 ﻿const CARD_BACK_URL =
     "https://lmnbqvdsxtxtwaailzeh.supabase.co/storage/v1/object/sign/assets/back-card.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xYmE0ZDNmOC1jODVmLTRkOGQtOGIwMi05Yzg4OTdmM2YzZjgiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhc3NldHMvYmFjay1jYXJkLnBuZyIsImlhdCI6MTc1ODU3NjgzMywiZXhwIjoxNzYyODk2ODMzfQ.PGaG8bcm69E2dfD5OuCrM0DHK0754jbNMtC6FRm_gBo";
+import { Link as LinkIcon, Trash2 } from "lucide-react";
 
 export default function CardGrid({
     cards,
@@ -13,7 +14,17 @@ export default function CardGrid({
     updateCardEtat,
     pageInput,
     setPageInput,
-    goToPage
+    goToPage,
+    editingCardId,
+    setEditingCardId,
+    newImageUrl,
+    setNewImageUrl,
+    updateCardImage,
+    cardToDelete,
+    setCardToDelete,     
+    setShowDeleteModal,
+    showDeleteModal,
+    updateCardField,
 }) {
     return (
         <div>
@@ -27,6 +38,7 @@ export default function CardGrid({
                         key={card.id}
                         className="relative border border-gray-400 rounded shadow bg-gray-700 transition-shadow duration-300 hover:shadow-xl overflow-visible"
                     >
+                       
                         {/* Container image avec group */}
                         <div className="h-48 overflow-visible rounded-t-2xl relative group">
                             {card.image ? (
@@ -59,13 +71,85 @@ export default function CardGrid({
                                 </div>
                             )}
                         </div>
-
+                        
+                        
                         {/* Infos de la carte */}
                         <div className="p-4 relative z-20">
                             <h3 className="font-semibold text-lg text-white">{card.nom}</h3>
-                            <p className="text-sm text-gray-500">
-                                {card.type} - {card.classe}
-                            </p>
+                            {/* Select pour le type */}
+                            <div className="flex gap-1 items-center mt-1">
+                            <select
+                                value={card.type || ""}
+                                onChange={(e) => updateCardField(card.id, "type", e.target.value)}
+                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
+                            >
+                                <option value="">Sélectionner un type...</option>
+                                <option value="Monstre à Effet">Monstre à Effet</option>
+                                <option value="Monstre Normal">Monstre Normal</option>
+                                <option value="Magie Équipement">Magie Équipement</option>
+                                <option value="Magie Normale">Magie Normale</option>
+                                <option value="Magie Continue">Magie Continue</option>
+                                <option value="Magie Rapide">Magie Rapide</option>
+                                <option value="Piège Normal">Piège Normal</option>
+                                <option value="Piège Continu">Piège Continu</option>
+                                <option value="Piège Contre">Piège Contre</option>
+                                <option value="Monstre Synchro">Monstre Synchro</option>
+                                <option value="Token">Token</option>
+                                <option value="Monstre Rituel">Monstre Rituel</option>
+                                <option value="Magie Terrain">Magie Terrain</option>
+                                <option value="Magie Rituelle">Magie Rituelle</option>
+                                <option value="Monstre Fusion">Monstre Fusion</option>
+                                <option value="Monstre XYZ">Monstre XYZ</option>
+                                <option value="Monstre Lien">Monstre Lien</option>
+                                <option value="Monstre P. Effet">Monstre P. Effet</option>
+                                <option value="Monstre P. Normal">Monstre P. Normal</option>
+                                <option value="Monstre P. XYZ">Monstre P. XYZ</option>
+                                <option value="Monstre P. Fusion">Monstre P. Fusion</option>
+                                <option value="Monstre P. Synchro">Monstre P. Synchro</option>
+                                <option value="Compétence">Compétence</option>
+                                <option value="Monstre P. Rituel">Monstre P. Rituel</option>
+                                <option value="Spécial">Spécial</option>
+                                <option value="Stratégie">Stratégie</option>
+                                <option value="Tactique">Tactique</option>
+                                {/* ...ajoute tous les types que tu as dans ta base */}
+                            </select>
+
+                            {/* Select pour la classe */}
+                            <select
+                                value={card.classe || ""}
+                                onChange={(e) => updateCardField(card.id, "classe", e.target.value)}
+                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
+                            >
+                                <option value="">Sélectionner une classe...</option>
+                                <option value="No">No</option>
+                                <option value="Dragon">Dragon</option>
+                                <option value="Aqua">Aqua</option>
+                                <option value="Bête">Bête</option>
+                                <option value="Elfe">Elfe</option>
+                                <option value="Démon">Démon</option>
+                                <option value="Dinosaure">Dinosaure</option>
+                                <option value="Cyberse">Cyberse</option>
+                                <option value="Guerrier">Guerrier</option>
+                                <option value="Insecte">Insecte</option>
+                                <option value="Plante">Plante</option>
+                                <option value="Poisson">Poisson</option>
+                                <option value="Psychique">Psychique</option>
+                                <option value="Rocher">Rocher</option>
+                                <option value="Serpent de mer">Serpent de mer</option>
+                                <option value="Tonnerre">Tonnerre</option>
+                                <option value="Bête-Divine">Bête-Divine</option>
+                                <option value="Magicien">Magicien</option>
+                                <option value="Zombie">Zombie</option>
+                                <option value="Bête-Guerrier">Bête-Guerrier</option>
+                                <option value="Bête Ailée">Bête Ailée</option>
+                                <option value="Reptile">Reptile</option>
+                                <option value="Pyro">Pyro</option>
+                                <option value="Machine">Machine</option>
+                                <option value="Wyrm">Wyrm</option>
+                                <option value="Illusion">Illusion</option>
+                                {/* ...ajoute toutes tes classes */}
+                                </select>
+                            </div>
                             {/* 🔹 Select état */}
                             <select
                                 value={card.etat || ""}
@@ -83,6 +167,24 @@ export default function CardGrid({
                                 <option value="Bon état">Bon état</option>
                                 <option value="Abîmé">Abîmé</option>
                             </select>
+                            {/* Bouton suppression */}
+                            <button
+                                className="absolute top-1.5 right-8 bg-red-100 p-0.5 rounded-full shadow hover:bg-red-200 transition"
+                                onClick={() => {
+                                    setCardToDelete(card.id);
+                                    setShowDeleteModal(true);
+                                }}
+                            >
+                                <Trash2 size={12} className="text-red-600" />
+                            </button>
+
+                            {/* Bouton lien en haut à droite */}
+                            <button
+                                className="absolute top-2 right-2 bg-white p-0.5 rounded-full shadow hover:bg-gray-200 transition"
+                                onClick={() => setEditingCardId(card.id)}
+                            >
+                                <LinkIcon size={10} className="text-blue-600" />
+                            </button>
 
                             <div className="mt-2">
                                 {card.possede ? (
@@ -102,10 +204,40 @@ export default function CardGrid({
                                 )}
                             </div>
                         </div>
+                        {/* 🔹 Overlay édition (➡️ replacé à l’intérieur du map) */}
+                        {editingCardId === card.id && (
+                            <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 z-50">
+                                <input
+                                    type="text"
+                                    value={newImageUrl}
+                                    onChange={(e) => setNewImageUrl(e.target.value)}
+                                    placeholder="Nouveau lien d'image"
+                                    className="w-full px-2 py-1 rounded text-white mb-2"
+                                />
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => updateCardImage(card.id, newImageUrl)}
+                                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                                    >
+                                        Sauver
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setEditingCardId(null);
+                                            setNewImageUrl("");
+                                        }}
+                                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                                    >
+                                        Annuler
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
+
                 ))}
             </div>
-
+           
             {/* Pagination */}
             <div className="flex justify-center items-center gap-4 mt-6">
                 <button
