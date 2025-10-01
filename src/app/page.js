@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import CardGrid from "./CardGrid";
+import Carousel from "@/components/Carousel";
 
 export default function HomePage() {
     const [cards, setCards] = useState([]);
@@ -276,20 +277,8 @@ export default function HomePage() {
 
     return (
         <main className="p-6 max-w-7xl mx-auto">
-            <div className="flex justify-end mb-6">
-                <div className="bg-white border border-gray-200 p-4 rounded-2xl shadow-md text-right">
-                    <p className="text-sm">
-                        Possédées : <span className="font-semibold text-green-600">{totalOwned}</span>
-                    </p>
-                    <p className="text-sm">
-                        Manquantes : <span className="font-semibold text-red-600">{totalMissing}</span>
-                    </p>
-                    <p className="text-sm mt-1">
-                        Completion : <span className="font-bold text-blue-600">{completion}%</span>
-                    </p>
-                </div>
-            </div>
-
+            
+            
             <div className="flex justify-between items-center mb-6 p-4 bg-gray-800 rounded-xl shadow-md">
                 {/* Titre du site */}
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">Ma Collection Yu-Gi-Oh</h1>
@@ -309,6 +298,21 @@ export default function HomePage() {
                     📊 Stats
                     </a>
                 </div>
+            </div>
+            <div className="flex justify-end mb-6">
+                <div className="bg-white border border-gray-200 p-4 rounded-2xl shadow-md text-right">
+                    <p className="text-sm">
+                        Possédées : <span className="font-semibold text-green-600">{totalOwned}</span>
+                    </p>
+                    <p className="text-sm">
+                        Manquantes : <span className="font-semibold text-red-600">{totalMissing}</span>
+                    </p>
+                    <p className="text-sm mt-1">
+                        Completion : <span className="font-bold text-blue-600">{completion}%</span>
+                    </p>
+                </div>
+            
+                <Carousel interval={4000} limit={8} />
             </div>
             <input
                 type="text"
@@ -401,7 +405,6 @@ export default function HomePage() {
                     <option value="Illusion">Illusion</option>
                 </select>
             </div>
-
             <CardGrid
                 cards={cards}
                 loading={loading}

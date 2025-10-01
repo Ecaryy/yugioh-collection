@@ -26,6 +26,56 @@ export default function CardGrid({
     showDeleteModal,
     updateCardField,
 }) {
+    function getTypeColor(type) {
+        switch (type) {
+            case "Monstre Normal":
+                return "#FFE9B5";   // jaune clair orangé
+            case "Monstre à Effet":
+                return "#BD7B24";   // orangé
+            case "Piège Normal":
+                return "#94537A";   // rose foncé
+            case "Piège Continu":
+                return "#94537A";   // rose foncé
+            case "Piège Contre":
+                return "#94537A";   // rose foncé
+            case "Magie Normale":
+                return "#30593F";   // vert bleuté
+            case "Magie Continue":
+                return "#30593F";   // vert bleuté
+            case "Magie Terrain":
+                return "#30593F";   // vert bleuté
+            case "Magie Rapide":
+                return "#30593F";   // vert bleuté
+            case "Magie Rituelle":
+                return "#30593F";
+            case "Magie Équipement":
+                return "#30593F";
+            case "Monstre XYZ":
+                return "#000000";   // noir
+            case "Monstre Fusion":
+                return "#4D3A6E";   // violet foncé
+            case "Monstre Synchro":
+                return "#D9D9D9";   // blanc / gris clair
+            case "Monstre Lien":
+                return "#547FFF";   // blanc / gris clair
+            case "Monstre Rituelle":
+                return "#9CCEFF";
+            case "Monstre P. Effet":
+                return "#A3FFBD";
+            case "Monstre P. XYZ":
+                return "#A3FFBD";
+            case "Monstre P. Synchro":
+                return "#A3FFBD";
+            case "Monstre P. Normal":
+                return "#A3FFBD";
+            case "Monstre P. Fusion":
+                return "#A3FFBD";
+            case "Monstre P. Rituel":
+                return "#A3FFBD";
+            default:
+                return "#4D4D4D";   // fallback gris clair
+        }
+    }
     return (
         <div>
             {loading && (
@@ -36,22 +86,23 @@ export default function CardGrid({
                 {cards.map((card) => (
                     <div
                         key={card.id}
-                        className="relative border border-gray-400 rounded shadow bg-gray-700 transition-shadow duration-300 hover:shadow-xl overflow-visible"
+                        className="relative border border-gray-400 rounded-3xl shadow transition-shadow duration-300 hover:shadow-xl overflow-visible"
+                        style={{ backgroundColor: getTypeColor(card.type) }}
                     >
                        
                         {/* Container image avec group */}
-                        <div className="h-48 overflow-visible rounded-t-2xl relative group">
+                        <div className="h-48 overflow-visible rounded-t-3xl relative group ">
                             {card.image ? (
                                 <img
                                     src={card.image}
                                     alt={card.nom}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover rounded-lg"
                                 />
                             ) : (
                                 <img
                                     src={CARD_BACK_URL}
                                     alt="Dos de carte"
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover rounded-lg"
                                 />
                             )}
                             {/* 🔹 Badge "possédé" */}
@@ -66,7 +117,7 @@ export default function CardGrid({
                                     <img
                                         src={card.image}
                                         alt={card.nom}
-                                        className="max-h-[500px] object-contain transition-transform duration-300 transform scale-0 group-hover:scale-300 shadow-2xl"
+                                        className="max-h-[500px] object-contain transition-transform duration-300 transform scale-0 group-hover:scale-300 shadow-2xl "
                                     />
                                 </div>
                             )}
@@ -81,7 +132,7 @@ export default function CardGrid({
                             <select
                                 value={card.type || ""}
                                 onChange={(e) => updateCardField(card.id, "type", e.target.value)}
-                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
+                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
                             >
                                 <option value="">Sélectionner un type...</option>
                                 <option value="Monstre à Effet">Monstre à Effet</option>
@@ -118,7 +169,7 @@ export default function CardGrid({
                             <select
                                 value={card.classe || ""}
                                 onChange={(e) => updateCardField(card.id, "classe", e.target.value)}
-                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
+                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
                             >
                                 <option value="">Sélectionner une classe...</option>
                                 <option value="No">No</option>
