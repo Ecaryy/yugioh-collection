@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --color-bg: #110117;
+    --color-primary: #f9b44c; /* or doré orangé */
+    --color-primary-light: #ffca6f;
+    --color-text: #f5e3b5;
 }
 
 @theme inline {
@@ -20,12 +22,16 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: radial-gradient(circle at 20% 20%, #20032b 0%, #110117 80%);
+    color: var(--color-text);
+    min-height: 100vh;
 }
 .group-hover\:rotate-y-360:hover {
     transform: rotateY(360deg);
+}
+h1, h2, h3 {
+    color: var(--color-primary);
+    font-weight: 600;
 }
 
 @keyframes modal-in {

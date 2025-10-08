@@ -1,33 +1,27 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import { Inter } from "next/font/google";
+import { Cinzel, Marcellus_SC, Berkshire_Swash } from "next/font/google";
+const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
+const marcellus = Marcellus_SC({ subsets: ["latin"], weight: ["400"] });
+const berkshire = Berkshire_Swash({ subsets: ["latin"], weight: ["400"] });
+
 
 import "./globals.css";
 
 
-const inter = Inter({ subsets: ["latin"] });
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata = {
   title: "CollectiCards",
-  description: "Mon site de collection",
+    description: "Mon site de collection",
+    icons: {
+        icon: [
+            { url: '/Logo_petit.png', type: 'image/png' },
+            
+        ],
+    },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-              className={inter.className}
-      >
-        {children}
-      </body>
+    <html lang="fr">
+          <body className={cinzel.className}>{children}</body>
     </html>
   );
 }

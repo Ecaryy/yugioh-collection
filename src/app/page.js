@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import CardGrid from "./CardGrid";
 import Carousel from "@/components/Carousel";
+import { Pirata_One } from "next/font/google";
+const pirata = Pirata_One({ subsets: ["latin"], weight: ["400"] });
 
 export default function HomePage() {
     const [cards, setCards] = useState([]);
@@ -279,28 +281,38 @@ export default function HomePage() {
         <main className="p-6 max-w-7xl mx-auto">
             
             
-            <div className="flex justify-between items-center mb-6 p-4 bg-gray-800 rounded-xl shadow-md">
-                {/* Titre du site */}
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">Ma Collection Yu-Gi-Oh</h1>
-                <div className="flex gap-2">
-                <button
-                    onClick={() => setShowCreateModal(true)}
-                        className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition-colors"
-                >
-                    + Créer une carte
-                </button>
+            <div className="rounded-xl gap-4 mb-6 p-4 w-full flex justify-between items-center p-4 bg-gradient-to-r from-[#2a1b4a] to-[#320b52] shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+                {/* Logo + titre */}
+                <div className="flex items-center gap-3">
+                    <img
+                        src="/logo.png" // remplace par ton chemin Cloudinary ou public/logo.png
+                        alt="CollectiCards logo"
+                        className="w-15 h-15 object-contain drop-shadow-[0_0_5px_#f9b44c]"
+                    />
+                    <h1 className={`${pirata.className} text-3xl font-bold text-[#f9b44c] drop-shadow-[0_0_10px_#f9b44c]`}>
+                        CollectiCards
+                    </h1>
+                </div>
 
-                {/* Bouton pour stats */}
-                <a
-                    href="/stats"
-                    className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition-colors"
-                >
-                    📊 Stats
+                {/* Boutons */}
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="px-4 py-2 font-semibold rounded-lg border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
+                    >
+                        + Créer une carte
+                    </button>
+
+                    <a
+                        href="/stats"
+                        className="px-4 py-2 font-semibold rounded-lg border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
+                    >
+                        📊 Stats
                     </a>
                 </div>
             </div>
-            <div className="flex justify-end mb-6">
-                <div className="bg-white border border-gray-200 p-4 rounded-2xl shadow-md text-right">
+            
+                <div className=" p-4 rounded-2xl shadow-md text-right">
                     <p className="text-sm">
                         Possédées : <span className="font-semibold text-green-600">{totalOwned}</span>
                     </p>
@@ -310,24 +322,25 @@ export default function HomePage() {
                     <p className="text-sm mt-1">
                         Completion : <span className="font-bold text-blue-600">{completion}%</span>
                     </p>
-                </div>
+               
             
                 <Carousel interval={4000} limit={8} />
             </div>
+            <div className="flex flex-wrap gap-4 mb-6 p-4">
             <input
                 type="text"
                 placeholder="🔍 Rechercher..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full p-3 mb-6 border border-gray-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-96 p-3 mb-6 bg-[#241530] rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-[#f9b44c] border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
             />
             {/* Filtres */}
-            <div className="flex flex-wrap gap-4 mb-6">
+            
                 {/* Filtre possession */}
                 <select
                     value={filterPossede}
                     onChange={(e) => setFilterPossede(e.target.value)}
-                    className="p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                    className="p-3 mb-6 rounded-xl bg-[#241530] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#f9b44c] focus:border-[#0b0620] border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     <option value="all">Toutes les cartes</option>
                     <option value="possede">✅ Possédées</option>
@@ -338,7 +351,7 @@ export default function HomePage() {
                 <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                    className="p-3 mb-6 rounded-xl bg-[#241530] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#f9b44c] focus:border-[#0b0620] border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     <option value="all">Tous les types</option>
                     <option value="Monstre à Effet">Monstre à Effet</option>
@@ -374,7 +387,7 @@ export default function HomePage() {
                 <select
                     value={filterClasse}
                     onChange={(e) => setFilterClasse(e.target.value)}
-                    className="p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                    className="p-3 mb-6 rounded-xl bg-[#241530] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#f9b44c] focus:border-[#0b0620] border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     <option value="all">Toutes les classes</option>
                     <option value="No">No</option>
@@ -431,7 +444,7 @@ export default function HomePage() {
             />
             {showCreateModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+                    <div className="bg-[#241530] rounded-lg p-6 w-full max-w-md relative">
                         <h2 className="text-xl font-bold mb-4">Créer une nouvelle carte</h2>
 
                         {/* Nom */}
@@ -447,7 +460,7 @@ export default function HomePage() {
                         <select
                             value={newCard.type}
                             onChange={(e) => setNewCard({ ...newCard, type: e.target.value })}
-                            className="w-full px-2 py-1 mb-2 border rounded"
+                            className="w-full px-2 py-1 mb-2 border rounded bg-[#241530] hover:shadow-[0_0_15px_#f9b44c] transition"
                         >
                             <option value="">Sélectionner un type...</option>
                             <option value="Monstre à Effet">Monstre à Effet</option>
@@ -484,7 +497,7 @@ export default function HomePage() {
                         <select
                             value={newCard.classe}
                             onChange={(e) => setNewCard({ ...newCard, classe: e.target.value })}
-                            className="w-full px-2 py-1 mb-2 border rounded"
+                            className="w-full px-2 py-1 mb-2 border rounded bg-[#241530] hover:shadow-[0_0_15px_#f9b44c] transition"
                         >
                             <option value="">Sélectionner une classe...</option>
                             <option value="No">No</option>
@@ -520,7 +533,7 @@ export default function HomePage() {
                         <select
                             value={newCard.etat}
                             onChange={(e) => setNewCard({ ...newCard, etat: e.target.value })}
-                            className="w-full px-2 py-1 mb-2 border rounded"
+                            className="w-full px-2 py-1 mb-2 border rounded bg-[#241530] hover:shadow-[0_0_15px_#f9b44c] transition"
                         >
                             <option value="">Sélectionner un état...</option>
                             <option value="Neuf">Neuf</option>
@@ -553,7 +566,7 @@ export default function HomePage() {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setShowCreateModal(false)}
-                                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                                className="px-3 py-1 bg-[#241530] rounded hover:bg-gray-400 border border-[#f9b44c] text-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                             >
                                 Annuler
                             </button>
@@ -580,7 +593,7 @@ export default function HomePage() {
                                         console.error("Erreur lors de l'ajout :", error);
                                     }
                                 }}
-                                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                className="px-3 py-1 border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                             >
                                 Ajouter
                             </button>
@@ -591,11 +604,11 @@ export default function HomePage() {
 
             {showDeleteModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-                    <div className="bg-white rounded-xl shadow-xl p-6 w-80">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    <div className="bg-[#241530] rounded-xl shadow-xl p-6 w-80">
+                        <h2 className="text-lg font-semibold text-[#f9b44c] mb-4">
                             Supprimer cette carte ?
                         </h2>
-                        <p className="text-sm text-gray-600 mb-6">
+                        <p className="text-sm text-[#f9b44c] mb-6">
                             Cette action est <span className="font-bold text-red-600">définitive</span>.
                         </p>
                         <div className="flex justify-end gap-3">
@@ -604,13 +617,13 @@ export default function HomePage() {
                                     setShowDeleteModal(false);
                                     setCardToDelete(null);
                                 }}
-                                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700"
+                                className="px-4 py-2 rounded-lg text-[#f9b44c] hover:text-[#0b0620] hover:bg-gray-300 hover:shadow-[0_0_15px_#f9b44c] transition"
                             >
                                 Annuler
                             </button>
                             <button
                                 onClick={() => deleteCard(cardToDelete)}
-                                className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
+                                className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold hover:shadow-[0_0_15px_#f9b44c] transition"
                             >
                                 Supprimer
                             </button>
@@ -620,14 +633,14 @@ export default function HomePage() {
             )}
             {showModal && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Ajouter {selectedCard.nom}</h2>
+                    <div className="bg-[#241530] backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full">
+                        <h2 className="text-xl font-bold mb-4 text-[#f9b44c]">Ajouter {selectedCard.nom}</h2>
 
                         <label className="block mb-2 font-medium">État de la carte :</label>
                         <select
                             value={etat}
                             onChange={(e) => setEtat(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg mb-4"
+                            className="w-full p-3  rounded-lg mb-4 bg-[#241530] border border-[#f9b44c] text-[#f9b44c] hover:shadow-[0_0_15px_#f9b44c] transition"
                         >
                             <option value="">Sélectionner...</option>
                             <option value="Neuf">Neuf</option>
@@ -643,20 +656,20 @@ export default function HomePage() {
                             value={imageUrl}
                             onChange={(e) => setImageUrl(e.target.value)}
                             placeholder="https://exemple.com/mon-image.jpg"
-                            className="w-full p-3 border border-gray-300 rounded-lg mb-4"
+                            className="w-full p-3 border border border-[#f9b44c] rounded-lg mb-4"
                         />
 
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition"
+                                className="px-4 py-2 rounded-lg hover:bg-gray-400 transition border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                             >
                                 Annuler
                             </button>
                             <button
                                 onClick={confirmAdd}
                                 disabled={!etat}
-                                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                                className="px-4 py-2 rounded-lg transition border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                             >
                                 Confirmer
                             </button>

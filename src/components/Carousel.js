@@ -160,14 +160,14 @@ export default function Carousel({ interval = 4000, limit = 10 }) {
                 <button
                     onClick={prev}
                     aria-label="Précédent"
-                    className="absolute left-2 z-30 p-2 bg-white/90 rounded-full shadow hover:scale-105 transition"
+                    className="absolute left-2 z-30 p-2 rounded-full border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     ◀
                 </button>
 
                 {/* Card display with fade/scale animation */}
                 <div className="relative w-40 sm:w-48 md:w-56 lg:w-72 h-full flex items-center justify-center">
-                    <div className="absolute inset-0 flex items-center justify-center"
+                    <div className="absolute inset-0 flex items-center justify-center before:content-[''] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-80 before:h-32 before:rounded-full before:bg-[#f9b44c]/80 before:blur-3xl before:pointer-events-none"
                     >
                         <div
                             key={current.id}
@@ -195,7 +195,7 @@ export default function Carousel({ interval = 4000, limit = 10 }) {
                 <button
                     onClick={next}
                     aria-label="Suivant"
-                    className="absolute right-2 z-30 p-2 bg-white/90 rounded-full shadow hover:scale-105 transition"
+                    className="absolute right-2 z-30 p-2 rounded-full shadow hover:scale-105 transition border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     ▶
                 </button>
@@ -208,13 +208,13 @@ export default function Carousel({ interval = 4000, limit = 10 }) {
                         key={c.id}
                         onClick={() => { stopTimer(); setIndex(idx); startTimer(); }}
                         aria-label={`Aller à ${c.nom}`}
-                        className={`w-2.5 h-2.5 rounded-full ${idx === index ? "bg-blue-600" : "bg-gray-300"}`}
+                        className={`w-2.5 h-2.5 rounded-full ${idx === index ? "bg-[#f9b44c]" : "bg-gray-300 border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"}`}
                     />
                 ))}
             </div>
 
             {/* small info below (type / etat) */}
-            <div className="mt-2 text-center text-sm text-gray-600">
+            <div className="mt-2 text-center text-sm text-[#f9b44c]">
                 <span className="font-medium">{current.type}</span>
                 {current.etat ? (<> — <span>{current.etat}</span></>) : null}
             </div>

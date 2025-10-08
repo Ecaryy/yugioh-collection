@@ -66,7 +66,7 @@ export default function StatsPage() {
             <div className="mb-4">
                 <Link
                     href="/"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+                    className="px-4 py-2 bg-[#241530] rounded-lg border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     ← Retour
                 </Link>
@@ -93,8 +93,8 @@ export default function StatsPage() {
                 <button
                     onClick={() => setView("type")}
                     className={`px-4 py-2 rounded-lg font-semibold ${view === "type"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200 hover:bg-gray-300"
+                        ? "bg-[#502275] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
+                        : "bg-[#241530] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                         }`}
                 >
                     Stats par Type
@@ -102,8 +102,8 @@ export default function StatsPage() {
                 <button
                     onClick={() => setView("classe")}
                     className={`px-4 py-2 rounded-lg font-semibold ${view === "classe"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200 hover:bg-gray-300"
+                        ? "bg-[#502275] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
+                        : "bg-[#241530] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                         }`}
                 >
                     Stats par Classe
@@ -116,7 +116,7 @@ export default function StatsPage() {
                     {typeStats.map((stat) => (
                         <div
                             key={stat.type}
-                            className="p-4 border rounded-lg shadow bg-gray-50"
+                            className="p-4 border rounded-lg shadow bg-[#241530]"
                         >
                             <p className="font-semibold mb-2 text-center">{stat.type}</p>
                             <div className="flex justify-around mb-2 text-sm">

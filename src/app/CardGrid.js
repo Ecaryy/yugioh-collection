@@ -86,7 +86,7 @@ export default function CardGrid({
                 {cards.map((card) => (
                     <div
                         key={card.id}
-                        className="relative border border-gray-400 rounded-3xl shadow transition-shadow duration-300 hover:shadow-xl overflow-visible"
+                        className=" rounded-3xl shadow transition-shadow duration-300 hover:shadow-xl overflow-visible"
                         style={{ backgroundColor: getTypeColor(card.type) }}
                     >
                        
@@ -107,8 +107,8 @@ export default function CardGrid({
                             )}
                             {/* 🔹 Badge "possédé" */}
                             {card.possede && (
-                                <div className="absolute top-2 left-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs z-30 shadow-md">
-                                    ✅
+                                <div className="absolute top-2 left-2 bg-green-500 text-[#f9b44c] rounded-full w-6 h-6 flex items-center justify-center text-xs z-30 shadow-md">
+                                    
                                 </div>
                             )}
                             {/* Overlay zoomée au hover */}
@@ -132,7 +132,7 @@ export default function CardGrid({
                             <select
                                 value={card.type || ""}
                                 onChange={(e) => updateCardField(card.id, "type", e.target.value)}
-                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
+                                    className="text-[10px] px-0.5 py-0.5 rounded border border-[#f9b44c] bg-[#241530] text-[#f9b44c] focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
                             >
                                 <option value="">Sélectionner un type...</option>
                                 <option value="Monstre à Effet">Monstre à Effet</option>
@@ -169,7 +169,7 @@ export default function CardGrid({
                             <select
                                 value={card.classe || ""}
                                 onChange={(e) => updateCardField(card.id, "classe", e.target.value)}
-                                    className="text-[10px] px-0.5 py-0.5 rounded border border-gray-300/20 bg-gray-100/10 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
+                                    className="text-[10px] px-0.5 py-0.5 rounded border border-[#f9b44c] bg-[#241530] text-[#f9b44c] focus:outline-none focus:ring-1 focus:ring-blue-300 max-w-[100px] truncate"
                             >
                                 <option value="">Sélectionner une classe...</option>
                                 <option value="No">No</option>
@@ -208,8 +208,8 @@ export default function CardGrid({
                                 disabled={!card.possede} // ⬅️ Désactivé si non possédée
                                 className={`w-full mt-2 px-2 py-1 text-sm rounded-md border 
     ${card.possede
-                                        ? "bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                        ? "border border-[#f9b44c] bg-[#241530] text-[#f9b44c] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    : "border border-[#f9b44c] bg-[#08040a] text-[#735322] cursor-not-allowed"
                                     }`}
                             >
                                 <option value="">Sélectionner un état...</option>
@@ -241,14 +241,14 @@ export default function CardGrid({
                                 {card.possede ? (
                                     <button
                                         onClick={() => toggleCardPossession(card.id, card.possede)}
-                                        className="w-full px-4 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 shadow-sm transition"
+                                        className="w-full px-4 py-2 rounded-xl font-semibold shadow-sm transition border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                                     >
                                         Retirer de ma collection
                                     </button>
                                 ) : (
                                     <button
                                         onClick={() => onAddClick(card)} // ⬅️ ouvre modal
-                                        className="w-full px-4 py-2 rounded-xl bg-green-500 text-white font-semibold hover:bg-green-600 shadow-sm transition"
+                                            className="w-full px-4 py-2 rounded-xl font-semibold shadow-sm transition border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                                     >
                                         Ajouter à ma collection
                                     </button>
@@ -294,7 +294,7 @@ export default function CardGrid({
                 <button
                     onClick={prevPage}
                     disabled={page === 0}
-                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+                    className="px-4 py-2 rounded bg-[#241530] border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     ◀ Page précédente
                 </button>
@@ -318,7 +318,7 @@ export default function CardGrid({
                 <button
                     onClick={nextPage}
                     disabled={page + 1 >= totalPages}
-                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+                    className="px-4 py-2 bg-[#241530] rounded border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     Page suivante ▶
                 </button>
