@@ -152,7 +152,7 @@ export default function StatsPage() {
                     {classeStats.map((stat) => (
                         <div
                             key={stat.classe}
-                            className="p-4 border rounded-lg shadow bg-gray-50"
+                            className="p-4 border rounded-lg shadow bg-[#241530]"
                         >
                             <p className="font-semibold mb-2 text-center">{stat.classe}</p>
                             <div className="flex justify-around mb-2 text-sm">
