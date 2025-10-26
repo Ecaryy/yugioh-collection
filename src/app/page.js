@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+
+import { useRouter } from "next/navigation";
+
 import { supabase } from "@/lib/supabaseClient";
+
 import CardGrid from "./CardGrid";
 import Carousel from "@/components/Carousel";
 import { Pirata_One } from "next/font/google";
@@ -9,6 +13,14 @@ const pirata = Pirata_One({ subsets: ["latin"], weight: ["400"] });
 export default function HomePage() {
     const [cards, setCards] = useState([]);
     const [search, setSearch] = useState("");
+
+    const router = useRouter();
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        if (value) router.push(value); // Redirige vers la page
+    };
+
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [pageInput, setPageInput] = useState(1);
@@ -258,6 +270,15 @@ export default function HomePage() {
         const { data, error } = await supabase.from("Cards").select("*").order("id", { ascending: true });
         if (!error) setCards(data);
     }
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (!e.target.closest(".menu-container")) {
+                setMenuOpen(false);
+            }
+        }
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, []);
 
     useEffect(() => {
         fetchCollectionStats();
@@ -308,7 +329,7 @@ export default function HomePage() {
                         CollectiCards
                     </h1>
                 </div>
-
+                
                 {/* Boutons */}
                 <div className="flex gap-2">
                     <button
@@ -324,6 +345,20 @@ export default function HomePage() {
                     >
                         📊 Stats
                     </a>
+                    {/* --- MENU DEROULANT --- */}
+                    
+                        <select
+                            onChange={handleChange}
+                            defaultValue="/"
+                            className="px-3 py-2 border-gray-300 rounded-lg bg-white text-gray-800 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="" disabled>
+                                Choisir une collection
+                            </option>
+                            <option value="/">Yu-Gi-Oh!</option>
+                            <option value="/pokemon">Pokémon</option>
+                        </select>
+                    
                 </div>
             </div>
             
