@@ -1,6 +1,6 @@
 ﻿const CARD_BACK_URL =
     "https://lmnbqvdsxtxtwaailzeh.supabase.co/storage/v1/object/sign/assets/back-card.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xYmE0ZDNmOC1jODVmLTRkOGQtOGIwMi05Yzg4OTdmM2YzZjgiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhc3NldHMvYmFjay1jYXJkLnBuZyIsImlhdCI6MTc1ODU3NjgzMywiZXhwIjoxNzYyODk2ODMzfQ.PGaG8bcm69E2dfD5OuCrM0DHK0754jbNMtC6FRm_gBo";
-import { Link as LinkIcon, Trash2 } from "lucide-react";
+import { Link as LinkIcon, Trash2, PencilIcon } from "lucide-react";
 
 export default function CardGrid({
     cards,
@@ -19,7 +19,11 @@ export default function CardGrid({
     setEditingCardId,
     newImageUrl,
     setNewImageUrl,
-    updateCardImage,
+    newExemplaires,
+    setNewExemplaires,
+    newExtension,
+    setNewExtension,
+    updateCardData,
     cardToDelete,
     setCardToDelete,     
     setShowDeleteModal,
@@ -105,6 +109,12 @@ export default function CardGrid({
                                     className="w-full h-full object-cover rounded-lg"
                                 />
                             )}
+                            {card.exemplaires > 0 && (
+                                <span className="text-yellow-400 text-sm ml-1">
+                                    {"🂡".repeat(card.exemplaires)}
+                                </span>
+                            )}
+
                             {/* 🔹 Badge "possédé" */}
                             {card.possede && (
                                 <div className="absolute top-2 left-2 bg-green-500 text-[#f9b44c] rounded-full w-6 h-6 flex items-center justify-center text-xs z-30 shadow-md">
@@ -201,6 +211,12 @@ export default function CardGrid({
                                 {/* ...ajoute toutes tes classes */}
                                 </select>
                             </div>
+                            {/* Extension */}
+                            {card.extension && (
+                                <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-gray-800/60 text-gray-100 rounded-full">
+                                    {card.extension}
+                                </span>
+                            )}
                             {/* 🔹 Select état */}
                             <select
                                 value={card.etat || ""}
@@ -234,9 +250,9 @@ export default function CardGrid({
                                 className="absolute top-2 right-2 bg-white p-0.5 rounded-full shadow hover:bg-gray-200 transition"
                                 onClick={() => setEditingCardId(card.id)}
                             >
-                                <LinkIcon size={10} className="text-blue-600" />
+                                <PencilIcon size={10} className="text-blue-600" />
                             </button>
-
+                            {/* ajouter/retirer de la collection */}
                             <div className="mt-2">
                                 {card.possede ? (
                                     <button
@@ -253,37 +269,62 @@ export default function CardGrid({
                                         Ajouter à ma collection
                                     </button>
                                 )}
+                                {/* 🔹 Overlay édition */}
+                                {editingCardId === card.id && (
+                                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 z-50">
+                                        <input
+                                            type="text"
+                                            value={newImageUrl}
+                                            onChange={(e) => setNewImageUrl(e.target.value)}
+                                            placeholder="Nouveau lien d'image"
+                                            className="w-full px-2 py-1 rounded text-white mb-2"
+                                        />
+
+                                        {/* 🂡 Nouveau champ : nombre d’exemplaires */}
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            placeholder={`Exemplaires actuels : ${card.exemplaires ?? 0}`}
+                                            value={newExemplaires}
+
+                                            onChange={(e) => setNewExemplaires(e.target.value)}
+                                            
+                                            className="w-full px-2 py-1 rounded text-white mb-2"
+                                        />
+
+                                        {/* 🌿 Nouveau champ : extension */}
+                                        <input
+                                            type="text"
+                                            value={newExtension}
+                                            onChange={(e) => setNewExtension(e.target.value)}
+                                            placeholder={`Extension actuelle : ${card.extension ?? "Aucune"}`}
+                                            className="w-full px-2 py-1 rounded text-white mb-2"
+                                        />
+
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() =>
+                                                    updateCardData(card.id, newImageUrl, newExemplaires, newExtension)
+                                                }
+                                                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                                            >
+                                                Sauver
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setEditingCardId(null);
+                                                    setNewImageUrl("");
+                                                }}
+                                                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                                            >
+                                                Annuler
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        {/* 🔹 Overlay édition (➡️ replacé à l’intérieur du map) */}
-                        {editingCardId === card.id && (
-                            <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 z-50">
-                                <input
-                                    type="text"
-                                    value={newImageUrl}
-                                    onChange={(e) => setNewImageUrl(e.target.value)}
-                                    placeholder="Nouveau lien d'image"
-                                    className="w-full px-2 py-1 rounded text-white mb-2"
-                                />
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => updateCardImage(card.id, newImageUrl)}
-                                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                                    >
-                                        Sauver
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setEditingCardId(null);
-                                            setNewImageUrl("");
-                                        }}
-                                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                                    >
-                                        Annuler
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        
                     </div>
 
                 ))}

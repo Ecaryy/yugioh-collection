@@ -18,7 +18,8 @@ export default function HomePage() {
     const [completion, setCompletion] = useState(0);
     const CARDS_PER_PAGE = 20;
 
-
+    const [newExemplaires, setNewExemplaires] = useState(0);
+    const [newExtension, setNewExtension] = useState("");
     const [filterPossede, setFilterPossede] = useState("all"); // all | possede | manquant
     const [filterType, setFilterType] = useState("all");       // all | Monstre | Magie | Piège
     const [filterClasse, setFilterClasse] = useState("all");
@@ -27,6 +28,8 @@ export default function HomePage() {
     const [showModal, setShowModal] = useState(false);
     const [etat, setEtat] = useState("");
     const [imageUrl, setImageUrl] = useState(""); 
+    const [extension, setExtension] = useState(""); 
+    const [exemplaires, setExemplaires] = useState(""); 
     const [editingCardId, setEditingCardId] = useState(null);
     const [newImageUrl, setNewImageUrl] = useState("");
 
@@ -41,6 +44,8 @@ export default function HomePage() {
         etat: "",
         image: "",
         possede: false,
+        exemplaires: 0,
+        extension: "",
     });
 
 
@@ -50,20 +55,28 @@ export default function HomePage() {
         setShowModal(true);
     }
 
-    async function updateCardImage(cardId, imageUrl) {
+    async function updateCardData(cardId, imageUrl, exemplaires, extension) {
         const { error } = await supabase
             .from("Cards")
-            .update({ image: imageUrl })
+            .update({
+                image: imageUrl,
+                exemplaires: exemplaires,
+                extension: extension
+            })
             .eq("id", cardId);
 
         if (!error) {
             setCards((prevCards) =>
                 prevCards.map((card) =>
-                    card.id === cardId ? { ...card, image: imageUrl } : card
+                    card.id === cardId
+                        ? { ...card, image: imageUrl, exemplaires, extension }
+                        : card
                 )
             );
             setEditingCardId(null);
             setNewImageUrl("");
+        } else {
+            console.error(error);
         }
     }
 
@@ -91,7 +104,7 @@ export default function HomePage() {
 
         const { error } = await supabase
             .from("Cards")
-            .update({ possede: true, etat, image: imageUrl || selectedCard.image })
+            .update({ possede: true, etat, image: imageUrl || selectedCard.image, exemplaires, extension })
             .eq("id", selectedCard.id);
 
         if (error) {
@@ -101,7 +114,7 @@ export default function HomePage() {
             setCards((prev) =>
                 prev.map((c) =>
                     c.id === selectedCard.id
-                        ? { ...c, possede: true, etat, image: imageUrl || c.image }
+                        ? { ...c, possede: true, etat, image: imageUrl || c.image, exemplaires, extension }
                         : c
                 )
             );
@@ -110,6 +123,8 @@ export default function HomePage() {
             setImageUrl("");
             setSelectedCard(null);
             setShowModal(false);
+            setExtension(null);
+            setExemplaires(0);
         }
     }
 
@@ -189,14 +204,14 @@ export default function HomePage() {
             // Si on retire la carte → mettre possede = false et vider etat
             const { error } = await supabase
                 .from("Cards")
-                .update({ possede: false, etat: null, image: null })
+                .update({ possede: false, etat: null, image: null, extension :null, exemplaires :0 })
                 .eq("id", cardId);
 
             if (error) console.error("Erreur mise à jour carte:", error);
             else {
                 setCards((prev) =>
                     prev.map((c) =>
-                        c.id === cardId ? { ...c, possede: false, etat: null, image: null } : c
+                        c.id === cardId ? { ...c, possede: false, etat: null, image: null, exemplaires: 0, extension: null } : c
                     )
                 );
             }
@@ -435,7 +450,11 @@ export default function HomePage() {
                 setEditingCardId={setEditingCardId}
                 newImageUrl={newImageUrl}
                 setNewImageUrl={setNewImageUrl}
-                updateCardImage={updateCardImage}
+                newExemplaires={newExemplaires}
+                setNewExemplaires={setNewExemplaires}
+                newExtension={newExtension}
+                setNewExtension={setNewExtension}
+                updateCardData={updateCardData}
                 cardToDelete={cardToDelete}             // ← nouvel état
                 setCardToDelete={setCardToDelete}       // ← fonction setter
                 showDeleteModal={showDeleteModal}       // ← nouvel état
@@ -550,7 +569,22 @@ export default function HomePage() {
                             onChange={(e) => setNewCard({ ...newCard, image: e.target.value })}
                             className="w-full px-2 py-1 mb-4 border rounded"
                         />
-
+                        <input
+                            type="number"
+                            min="0"
+                            placeholder="Nombre D'exemplaire"
+                            value={newCard.exemplaires}
+                            onChange={(e) => setNewCard({ ...newCard, exemplaires: parseInt(e.target.value) || 0 })}
+                            className="w-full px-2 py-1 mb-4 border rounded"
+                        />
+                       
+                        <input
+                            type="text"
+                            placeholder="Extension :"
+                            value={newCard.extension}
+                            onChange={(e) => setNewCard({ ...newCard, extension: e.target.value })}
+                            className="w-full px-2 py-1 mb-4 border rounded"
+                        />
                         {/* Possédé ? */}
                         <label className="flex items-center mb-4">
                             <input
@@ -572,7 +606,7 @@ export default function HomePage() {
                             </button>
                             <button
                                 onClick={async () => {
-                                    const { nom, type, classe, etat, image, possede } = newCard;
+                                    const { nom, type, classe, etat, image, possede, exemplaires, extension } = newCard;
 
                                     const { data, error } = await supabase
                                         .from("Cards")
@@ -588,6 +622,8 @@ export default function HomePage() {
                                             etat: "",
                                             image: "",
                                             possede: false,
+                                            exemplaires: 0,
+                                            extension: "",
                                         });
                                     } else {
                                         console.error("Erreur lors de l'ajout :", error);
@@ -658,7 +694,22 @@ export default function HomePage() {
                             placeholder="https://exemple.com/mon-image.jpg"
                             className="w-full p-3 border border border-[#f9b44c] rounded-lg mb-4"
                         />
-
+                        <input
+                            type="text"
+                            value={extension}
+                            onChange={(e) => setExtension(e.target.value)}
+                            placeholder="DUAD-FR020 x2 "
+                            className="w-full p-3 border border border-[#f9b44c] rounded-lg mb-4"
+                        />
+                       
+                        <input
+                            type="number"
+                            min="0"
+                            value={exemplaires}
+                            onChange={(e) => setExemplaires(parseInt(e.target.value) || 0 )}
+                            placeholder="0"
+                            className="w-full p-3 border border border-[#f9b44c] rounded-lg mb-4"
+                        />
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowModal(false)}
