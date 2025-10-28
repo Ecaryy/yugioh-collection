@@ -231,7 +231,7 @@ export default function CardGrid({
                                 <option value="">Sélectionner un état...</option>
                                 <option value="Neuf">Neuf</option>
                                 <option value="Très bon état">Très bon état</option>
-                                <option value="Bon état">Bon état</option>
+                                <option value="Joué">Joué</option>
                                 <option value="Abîmé">Abîmé</option>
                             </select>
                             {/* Bouton suppression */}

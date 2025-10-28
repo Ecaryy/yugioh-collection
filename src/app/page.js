@@ -20,7 +20,7 @@ export default function HomePage() {
         const value = e.target.value;
         if (value) router.push(value); // Redirige vers la page
     };
-
+    const [menuOpen, setMenuOpen] = useState(false);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [pageInput, setPageInput] = useState(1);
@@ -149,7 +149,9 @@ export default function HomePage() {
         let query = supabase
             .from("Cards")
             .select("*", { count: "exact" })
+            .order("nom", { ascending: true })
             .range(from, to);
+            
 
         if (searchTerm) {
             query = query.ilike("nom", `%${searchTerm}%`);
@@ -168,7 +170,7 @@ export default function HomePage() {
         }
 
         if (filterClasse !== "all") {
-            query = query.eq("classe", filterClasse);
+            query = query.or(`classe.eq.${filterClasse},classe.is.null`);
         }
 
         const { data, count, error } = await query;
@@ -440,6 +442,7 @@ export default function HomePage() {
                     className="p-3 mb-6 rounded-xl bg-[#241530] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#f9b44c] focus:border-[#0b0620] border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"
                 >
                     <option value="all">Toutes les classes</option>
+                    <option value="NULL">NULL</option>
                     <option value="No">No</option>
                     <option value="Dragon">Dragon</option>
                     <option value="Aqua">Aqua</option>
@@ -592,7 +595,7 @@ export default function HomePage() {
                             <option value="">Sélectionner un état...</option>
                             <option value="Neuf">Neuf</option>
                             <option value="Très bon état">Très bon état</option>
-                            <option value="Bon état">Bon état</option>
+                            <option value="Joué">Joué</option>
                             <option value="Abîmé">Abîmé</option>
                         </select>
 
@@ -716,7 +719,7 @@ export default function HomePage() {
                             <option value="">Sélectionner...</option>
                             <option value="Neuf">Neuf</option>
                             <option value="Très bon état">Très bon état</option>
-                            <option value="Bon état">Bon état</option>
+                            <option value="Joué">Joué</option>
                             <option value="Abîmé">Abîmé</option>
                         </select>
 

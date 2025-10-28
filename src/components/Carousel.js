@@ -18,8 +18,10 @@ export default function Carousel({ interval = 4000, limit = 10 }) {
             setLoading(true);
             const { data, error } = await supabase
                 .from("Cards")
-                .select("id,nom,image,type,etat")
-                .eq("possede", true);
+                .select("id, nom, image, type, etat")
+                .eq("possede", true)
+                .not("image", "is", null)
+                .not("image", "eq", "");
 
             if (error) {
                 console.error("Supabase carousel error:", error);
@@ -166,7 +168,7 @@ export default function Carousel({ interval = 4000, limit = 10 }) {
                 </button>
 
                 {/* Card display with fade/scale animation */}
-                <div className="relative w-40 sm:w-48 md:w-56 lg:w-72 h-full flex items-center justify-center">
+                <div className="relative w-32 sm:w-40 md:w-48 lg:w-60 h-full flex items-center justify-center">
                     <div className="absolute inset-0 flex items-center justify-center before:content-[''] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-80 before:h-32 before:rounded-full before:bg-[#f9b44c]/80 before:blur-3xl before:pointer-events-none"
                     >
                         <div
