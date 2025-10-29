@@ -30,6 +30,7 @@ export default function HomePage() {
     const [completion, setCompletion] = useState(0);
     const CARDS_PER_PAGE = 20;
 
+    const [firstEdition, setFirstEdition] = useState(false);
     const [newExemplaires, setNewExemplaires] = useState(0);
     const [newExtension, setNewExtension] = useState("");
     const [filterPossede, setFilterPossede] = useState("all"); // all | possede | manquant
@@ -116,7 +117,7 @@ export default function HomePage() {
 
         const { error } = await supabase
             .from("Cards")
-            .update({ possede: true, etat, image: imageUrl || selectedCard.image, exemplaires, extension })
+            .update({ possede: true, etat, image: imageUrl || selectedCard.image, exemplaires, extension, first_edition: firstEdition })
             .eq("id", selectedCard.id);
 
         if (error) {
@@ -126,7 +127,7 @@ export default function HomePage() {
             setCards((prev) =>
                 prev.map((c) =>
                     c.id === selectedCard.id
-                        ? { ...c, possede: true, etat, image: imageUrl || c.image, exemplaires, extension }
+                        ? { ...c, possede: true, etat, image: imageUrl || c.image, exemplaires, extension, first_edition: firstEdition }
                         : c
                 )
             );
@@ -137,6 +138,7 @@ export default function HomePage() {
             setShowModal(false);
             setExtension(null);
             setExemplaires(0);
+            setFirstEdition(false);
         }
     }
 
@@ -218,14 +220,14 @@ export default function HomePage() {
             // Si on retire la carte → mettre possede = false et vider etat
             const { error } = await supabase
                 .from("Cards")
-                .update({ possede: false, etat: null, image: null, extension :null, exemplaires :0 })
+                .update({ possede: false, etat: null, image: null, extension :null, exemplaires :0, first_edition :false })
                 .eq("id", cardId);
 
             if (error) console.error("Erreur mise à jour carte:", error);
             else {
                 setCards((prev) =>
                     prev.map((c) =>
-                        c.id === cardId ? { ...c, possede: false, etat: null, image: null, exemplaires: 0, extension: null } : c
+                        c.id === cardId ? { ...c, possede: false, etat: null, image: null, exemplaires: 0, extension: null, first_edition: false } : c
                     )
                 );
             }
@@ -285,6 +287,7 @@ export default function HomePage() {
     useEffect(() => {
         fetchCollectionStats();
     }, []);
+
     // Reload cards chaque fois que la recherche change
     useEffect(() => {
         setPage(0);
@@ -739,7 +742,15 @@ export default function HomePage() {
                             placeholder="DUAD-FR020 x2 "
                             className="w-full p-3 border border border-[#f9b44c] rounded-lg mb-4"
                         />
-                       
+                        <label className="flex items-center gap-2 mb-4 text-[#f9b44c]">
+                            <input
+                                type="checkbox"
+                                checked={firstEdition}
+                                onChange={(e) => setFirstEdition(e.target.checked)}
+                                className="w-4 h-4 accent-[#f9b44c] cursor-pointer"
+                            />
+                            <span>1ʳᵉ édition</span>
+                        </label>
                         <input
                             type="number"
                             min="0"

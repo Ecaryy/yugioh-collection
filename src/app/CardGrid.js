@@ -80,6 +80,15 @@ export default function CardGrid({
                 return "#4D4D4D";   // fallback gris clair
         }
     }
+    async function handleToggleFirstEdition(cardId, newValue) {
+        try {
+            // appelle la fonction fournie par la page : elle mettra à jour la BDD et le state global
+            await updateCardField(cardId, "first_edition", newValue);
+        } catch (err) {
+            console.error("Erreur mise à jour first_edition :", err);
+        }
+    }
+
     return (
         <div>
             {loading && (
@@ -210,7 +219,21 @@ export default function CardGrid({
                                 <option value="Illusion">Illusion</option>
                                 {/* ...ajoute toutes tes classes */}
                                 </select>
+                                
                             </div>
+                            <div className="flex items-center gap-2 mt-2">
+                                <label className="flex items-center gap-1 text-xs text-gray-200">
+                                    <input
+                                        type="checkbox"
+                                        checked={card.first_edition || false}
+                                        onChange={(e) => handleToggleFirstEdition(card.id, e.target.checked)}
+                                        className="w-4 h-4 accent-[#f9b44c] cursor-pointer"
+                                    />
+                                    <span>1ʳᵉ édition</span>
+                                </label>
+                            </div>
+
+
                             {/* Extension */}
                             {card.extension && (
                                 <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-gray-800/60 text-gray-100 rounded-full">
