@@ -241,7 +241,7 @@ export default function PokemonPage() {
                             <option value="Pouvoirs Émergents">Pouvoirs Émergents</option>
                             <option value="Noir et Blanc">Noir et Blanc</option>
                             <option value="Promos Black Star Noir & Blanc">Promos Black Star Noir & Blanc</option>
-                            <option value="L'appel des légendes">L'appel des légendes</option>
+                            <option value="L'appel des légendes">L{"'"}appel des légendes</option>
                             <option value="HS : Triomphe">HS : Triomphe</option>
                             <option value="HS : Indomptable">HS : Indomptable</option>
                             <option value="HS : Déchaînement">HS : Déchaînement</option>
@@ -298,19 +298,19 @@ export default function PokemonPage() {
                             <option value="Southern Islands">Southern Islands</option>
                             <option value="Box Topper">Box Topper</option>
                             <option value="Box Topper">Box Topper</option>
-                            <option value="Promo McDonald's 2024">Promo McDonald's 2024</option>
-                            <option value="Promo McDonald's 2023">Promo McDonald's 2023</option>
-                            <option value="Promo McDonald's 2022">Promo McDonald's 2022</option>
-                            <option value="Promo McDonald's 2021">Promo McDonald's 2021</option>
-                            <option value="Promo McDonald's 2019">Promo McDonald's 2019</option>
-                            <option value="Promo McDonald's 2018">Promo McDonald's 2018</option>
-                            <option value="Promo McDonald's 2017">Promo McDonald's 2017</option>
-                            <option value="Promo McDonald's 2016">Promo McDonald's 2016</option>
-                            <option value="Promo McDonald's 2015">Promo McDonald's 2015</option>
-                            <option value="Promo McDonald's 2014">Promo McDonald's 2014</option>
-                            <option value="Promo McDonald's 2013">Promo McDonald's 2013</option>
-                            <option value="Promo McDonald's 2012">Promo McDonald's 2012</option>
-                            <option value="Promo McDonald's 2011">Promo McDonald's 2011</option>
+                            <option value="Promo McDonald's 2024">Promo McDonald{"'"}s 2024</option>
+                            <option value="Promo McDonald's 2023">Promo McDonald{"'"}s 2023</option>
+                            <option value="Promo McDonald's 2022">Promo McDonald{"'"}s 2022</option>
+                            <option value="Promo McDonald's 2021">Promo McDonald{"'"}s 2021</option>
+                            <option value="Promo McDonald's 2019">Promo McDonald{"'"}s 2019</option>
+                            <option value="Promo McDonald's 2018">Promo McDonald{"'"}s 2018</option>
+                            <option value="Promo McDonald's 2017">Promo McDonald{"'"}s 2017</option>
+                            <option value="Promo McDonald's 2016">Promo McDonald{"'"}s 2016</option>
+                            <option value="Promo McDonald's 2015">Promo McDonald{"'"}s 2015</option>
+                            <option value="Promo McDonald's 2014">Promo McDonald{"'"}s 2014</option>
+                            <option value="Promo McDonald's 2013">Promo McDonald{"'"}s 2013</option>
+                            <option value="Promo McDonald's 2012">Promo McDonald{"'"}s 2012</option>
+                            <option value="Promo McDonald's 2011">Promo McDonald{"'"}s 2011</option>
 
                     </select>
                         <button
