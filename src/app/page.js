@@ -322,7 +322,7 @@ export default function HomePage() {
         <main className="p-6 max-w-7xl mx-auto">
             
             
-            <div className="rounded-xl gap-4 mb-6 p-4 w-full flex justify-between items-center p-4 bg-gradient-to-r from-[#2a1b4a] to-[#320b52] shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <div className="rounded-xl gap-4 mb-6 p-4 w-full flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-[#2a1b4a] to-[#320b52] shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
                 {/* Logo + titre */}
                 <div className="flex items-center gap-3">
                     <img
@@ -336,7 +336,7 @@ export default function HomePage() {
                 </div>
                 
                 {/* Boutons */}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-3 items-center justify-center mt-4 md:mt-0">
                     <button
                         onClick={() => setShowCreateModal(true)}
                         className="px-4 py-2 font-semibold rounded-lg border border-[#f9b44c] text-[#f9b44c] hover:bg-[#f9b44c] hover:text-[#0b0620] hover:shadow-[0_0_15px_#f9b44c] transition"

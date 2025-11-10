@@ -80,6 +80,14 @@ export default function CardGrid({
                 return "#4D4D4D";   // fallback gris clair
         }
     }
+
+    function handleEditClick(card) {
+        setEditingCardId(card.id);
+        setNewImageUrl(card.image || "");
+        setNewExemplaires(card.exemplaires ?? 0);
+        setNewExtension(card.extension || "");
+    }
+
     async function handleToggleFirstEdition(cardId, newValue) {
         try {
             // appelle la fonction fournie par la page : elle mettra à jour la BDD et le state global
@@ -271,7 +279,7 @@ export default function CardGrid({
                             {/* Bouton lien en haut à droite */}
                             <button
                                 className="absolute top-2 right-2 bg-white p-0.5 rounded-full shadow hover:bg-gray-200 transition"
-                                onClick={() => setEditingCardId(card.id)}
+                                onClick={() => handleEditClick(card)}
                             >
                                 <PencilIcon size={10} className="text-blue-600" />
                             </button>
